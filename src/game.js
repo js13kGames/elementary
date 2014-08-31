@@ -1,57 +1,60 @@
-exports = (function() {
-	
-	var width = 10,
-		height = 10,
-		colors = 4,
-		board = [];
+function Game(width, height, colors) {
+	this.width = width;
+	this.height = height;
+	this.colors = colors;
+	this.board = [];
+	this.balls = [];
+	var index = 0;
+	for (var x=0; x<width; x++) {
+		this.board[x] = [];
+		for (var y=0; y<height; y++) {
+			this.balls[index] = {
+				index: index++,
+				color: Math.round(Math.random() * (colors-1)),
+				hide: false
+			};
+		}
+	}
+}
 
-	function init() {
-		var i = 0;
-		for (var x=0; x<width; x++) {
-			board[x] = [];
-			for (var y=0; y<height; y++) {
-				board[x][y] = {
-					c: Math.round(Math.random() * (colors-1)),
-					h: false, 
-					i: i++
-				};
-			}
+Game.prototype.ball = function(x, y) {
+	return this.board[x] && this.board[x][y]
+		? this.board[x][y]
+		: null;
+};
+
+Game.prototype.shuffle = function() {
+	var index = 0;
+	for (var x=0; x<this.width; x++) {
+		for (var y=0; y<this.height; y++) {
+			var ball = this.balls[index++];
+			ball.color = Math.round(Math.random() * (this.colors-1)) + 1;
+			ball.hide = false;
+			this.board[x][y] = ball;
 		}
-		return shuffle();
 	}
-	
-	function shuffle() {
-		for (var x=0; x<width; x++) {
-			for (var y=0; y<height; y++) {
-				board[x][y].c = Math.round(Math.random() * (colors-1)) + 1;
-				board[x][y].h = false;
-			}
-		}
-		return board;
+};
+
+Game.prototype.remove = function(x, y) {
+	var ball = this.ball(x, y),
+		res = this.select(x, y, ball.color);
+	if (res.length < 2) {
+		ball.hide = false;
+		return [];
 	}
-	
-	function select(x, y, c) {
-		var res = [],
-			ball = board[x] && board[x][y] ? board[x][y] : false;
-		if (ball && !ball.h && (!c || ball.c == c)) {
-			ball.h = true;
-			res = [ball.i];
-			res = res.concat(select(x-1, y, ball.c));
-			res = res.concat(select(x+1, y, ball.c));
-			res = res.concat(select(x, y-1, ball.c));
-			res = res.concat(select(x, y+1, ball.c));
-			if (!c && res.length < 2) {
-				ball.h = false;
-				res = [];
-			}
-		}
-		return res;
+	return res;
+};
+
+Game.prototype.select = function(x, y, color) {
+	var res = [],
+		ball = this.ball(x, y);
+	if (ball && !ball.hide && ball.color == color) {
+		ball.hide = true;
+		res = [ball];
+		res = res.concat(this.select(x-1, y, ball.color));
+		res = res.concat(this.select(x+1, y, ball.color));
+		res = res.concat(this.select(x, y-1, ball.color));
+		res = res.concat(this.select(x, y+1, ball.color));
 	}
-	
-	return {
-		init: init,
-		select: select,
-		shuffle: shuffle
-	};
-	
-})();
+	return res;
+};
