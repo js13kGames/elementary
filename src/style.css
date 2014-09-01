@@ -11,6 +11,7 @@ body {
     margin: 0 auto;
 }
 .em {
+	cursor: pointer;
     display: block;
     position: absolute;
     width: 30px;
