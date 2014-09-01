@@ -3,58 +3,97 @@ function Game(width, height, colors) {
 	this.height = height;
 	this.colors = colors;
 	this.board = [];
-	this.balls = [];
-	var index = 0;
-	for (var x=0; x<width; x++) {
-		this.board[x] = [];
-		for (var y=0; y<height; y++) {
-			this.balls[index] = {
-				index: index++,
-				color: Math.round(Math.random() * (colors-1)),
-				hide: false
-			};
-		}
+	for (var i=0; i<width * height; i++) {
+		this.board[i] = {
+			i: i,
+			c: Math.round(Math.random() * (this.colors-1)),
+			h: false
+		};
 	}
 }
 
-Game.prototype.ball = function(x, y) {
-	return this.board[x] && this.board[x][y]
-		? this.board[x][y]
-		: null;
+Game.prototype.ball = function(x, y, data) {
+	if (
+		x >= 0 && x < this.width &&
+		y >= 0 && y < this.height
+	) {
+		var i = y * this.width + x;
+		if (data) {
+			this.board[i] = data;
+		} else {
+			return this.board[i];
+		}
+	}
+	return null;
 };
 
-Game.prototype.shuffle = function() {
-	var index = 0;
+Game.prototype.remove = function(x, y, c) {
+	var ball = this.ball(x, y);
+	if (ball && !ball.h && ball.c == c) {
+		ball.h = true;
+		this.remove(x-1, y, c);
+		this.remove(x+1, y, c);
+		this.remove(x, y-1, c);
+		this.remove(x, y+1, c);
+		return true;
+	}
+	return false;
+};
+
+Game.prototype.down = function() {
 	for (var x=0; x<this.width; x++) {
-		for (var y=0; y<this.height; y++) {
-			var ball = this.balls[index++];
-			ball.color = Math.round(Math.random() * (this.colors-1)) + 1;
-			ball.hide = false;
-			this.board[x][y] = ball;
+		var y = 0,
+			ball = this.ball(x, y);
+		for (var i=1; i<this.height; i++) {
+			if (ball.h) {
+				var next = this.ball(x, i);
+				if (!next.h) {
+					this.ball(x, y, next);
+					this.ball(x, i, ball);
+					ball = this.ball(x, ++y);
+				}
+			} else {
+				ball = this.ball(x, ++y);
+			}
 		}
 	}
 };
 
-Game.prototype.remove = function(x, y) {
-	var ball = this.ball(x, y),
-		res = this.select(x, y, ball.color);
-	if (res.length < 2) {
-		ball.hide = false;
-		return [];
+Game.prototype.left = function() {
+	var x=0,
+		ball = this.ball(x, 0);
+	for (var i=1; i<this.width; i++) {
+		var next = this.ball(i, 0);
+		if (ball.h) {
+			if (!next.h) {
+				for (var y=0; y<this.height; y++) {
+					next = this.ball(i, y);
+					this.ball(i, y, this.ball(x, y));
+					this.ball(x, y, next);
+				}
+				ball = this.ball(++x, 0);
+			}
+		} else {
+			ball = this.ball(++x, 0);
+		}
 	}
-	return res;
 };
 
-Game.prototype.select = function(x, y, color) {
-	var res = [],
-		ball = this.ball(x, y);
-	if (ball && !ball.hide && ball.color == color) {
-		ball.hide = true;
-		res = [ball];
-		res = res.concat(this.select(x-1, y, ball.color));
-		res = res.concat(this.select(x+1, y, ball.color));
-		res = res.concat(this.select(x, y-1, ball.color));
-		res = res.concat(this.select(x, y+1, ball.color));
+Game.prototype.select = function(x, y) {
+	var ball = this.ball(x, y),
+		res = false;
+	if (ball && !ball.h) {
+		ball.h = true;
+		res = this.remove(x-1, y, ball.c) || res;
+		res = this.remove(x+1, y, ball.c) || res;
+		res = this.remove(x, y-1, ball.c) || res;
+		res = this.remove(x, y+1, ball.c) || res;
+		if (res) {
+			this.down();
+			this.left();
+		} else {
+			ball.h = false;
+		}
 	}
 	return res;
 };

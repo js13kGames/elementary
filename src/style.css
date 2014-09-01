@@ -8,7 +8,6 @@ body {
 #board {
     width: 320px;
     height: 320px;
-    background: #ccc;
     margin: 0 auto;
 }
 .em {
@@ -20,13 +19,13 @@ body {
     border-radius: 15px;
     opacity: 1;
     z-index: 1;
-    transition: opacity .2s;
+    transition: opacity .2s, transform .4s;
 }
 .hide {
     opacity: 0;
     z-index: 0;
 }
-a.c1 { background:#099; }
-a.c2 { background:#630; }
-a.c3 { background:#f30; }
-a.c4 { background:#00c; }
+a.c0 { background:#099; }
+a.c1 { background:#630; }
+a.c2 { background:#f30; }
+a.c3 { background:#00c; }
