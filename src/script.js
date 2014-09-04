@@ -1,12 +1,20 @@
 var APP = (function() {
 
-	var board = document.getElementById('board'),
+	var container = document.getElementById('container'),
+		board = document.getElementById('board'),
 		score = document.getElementById('score'),
+		sound = document.getElementById('sound'),
 		pool = document.getElementsByTagName('a'),
-		game = new Game(10, 10, 3);
+		game = new Game(10, 10, 2);
+		
 
-	for (var i=0; i<game.width * game.height; i++) {
-		board.appendChild(document.createElement('a'));
+	for (var y=0; y<game.height; y++) {
+		for (var x=0; x<game.width; x++) {
+			var em = document.createElement('a');
+			em.className = 'em hide c0';
+			em.style.transform = 'translate(' + (x * 32) + 'px,' + ((game.height - y - 1) * 32) + 'px)';
+			board.appendChild(em);
+		}
 	}
 	
 	function render() {
@@ -24,17 +32,22 @@ var APP = (function() {
 			}
 		}
 		score.innerHTML = game.score;
-		if (!game.check(0, 0, 0)) alert('FINISHED!');
+		if (!game.check(0,0)) {
+			alert('FINISHED!');
+			game = new Game(10, 10, 3);
+			render();
+		}
 	}
 	
 	board.addEventListener('click', function(e) {
 		var data = JSON.parse(e.target.getAttribute('data-game'));
 		if (data && game.select(data.x, data.y)) {
+			sound.play();
 			render();
 		}
 	}, false);
 
-	render();
+	window.onload = render;
 
 	return {
 		game: game

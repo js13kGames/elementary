@@ -104,7 +104,7 @@ Game.prototype.select = function(x, y) {
 Game.prototype.check = function(x, y, c) {
 	var ball = this.ball(x, y);
 	if (ball && !ball.h) {
-		return ball.c == c ||
+		return ball.c === c ||
 			this.check(x+1, y, ball.c) ||
 			this.check(x, y+1, ball.c);
 	}
