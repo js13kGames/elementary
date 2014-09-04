@@ -8,10 +8,14 @@ body {
     font-family: Courier New, Courier, monospace;
 }
 h2 {
+    font-size: 20px;
 	margin: 10px 0;
 }
 #score {
 	float:right;
+}
+#sprite {
+    display:none;
 }
 #container {
     text-shadow: 0 1px #fff;
@@ -21,38 +25,54 @@ h2 {
 }
 #board {
     width: 320px;
-	height: 322px;
-    background: url(back.png);
-    background-position: 0px 1px;
+	height: 320px;
 }
 .em {
-	cursor: pointer;
     display: block;
     position: absolute;
     width: 32px;
     height: 32px;
     opacity: 1;
     z-index: 1;
-    background: url(sprite.png);
-    transition: opacity .3s, transform .3s cubic-bezier(0.795, 1.650, 0.620, 0.840);
+    transition: opacity .4s, transform .4s cubic-bezier(0.795, 1.650, 0.620, 0.840);
 }
 .hide {
     opacity: 0;
     z-index: 0;
 }
-a.c0 { background-position: 0px 0px; }
-a.c1 { background-position: -32px 0px; }
-a.c2 { background-position: 0px -32px; }
-a.c3 { background-position: -32px -32px; }
 
 @media (min-width: 480px) and (min-height: 540px) {
-    #container {
-        transform: scale(1.5);
+	h2 {
+	    font-size: 30px;
+	    margin: 15px 0;
+	}
+	#container {
+        width: 480px;
+	}
+	#board {
+	    width: 480px;
+	    height: 480px;
+	}
+    .em {
+        width: 48px;
+        height: 48px;
     }
 }
 
 @media (min-width: 640px) and (min-height: 720px) {
-    #container {
-        transform: scale(2);
+	h2 {
+	    font-size: 40px;
+	    margin: 20px 0;
+	}
+	#container {
+        width: 640px;
+    }
+    #board {
+        width: 640px;
+        height: 640px;
+    }
+    .em {
+        width: 64px;
+        height: 64px;
     }
 }
