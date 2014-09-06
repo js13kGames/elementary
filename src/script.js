@@ -6,7 +6,7 @@ var APP = (function() {
 		score = document.getElementById('score'),
 		sound = document.getElementById('sound'),
 		pool = document.getElementsByTagName('img'),
-		game = new Game(10, 10, 2),
+		game = new Game(10, 10, 3),
 		ctx = canvas.getContext('2d'),
 		colors = [];
 	
