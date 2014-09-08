@@ -1,9 +1,12 @@
 function Game(width, height, colors) {
 	this.score = 0;
+	this.bonus = 0;
+	this.time = 60;
 	this.width = width;
 	this.height = height;
 	this.colors = colors;
 	this.board = [];
+	this.start = new Date().getTime();
 	for (var i=0; i<width * height; i++) {
 		this.board[i] = {
 			i: i,
@@ -101,12 +104,32 @@ Game.prototype.select = function(x, y) {
 	return s;
 };
 
-Game.prototype.check = function(x, y, c) {
+Game.prototype._check = function(x, y, c) {
 	var ball = this.ball(x, y);
 	if (ball && !ball.h) {
 		return ball.c === c ||
-			this.check(x+1, y, ball.c) ||
-			this.check(x, y+1, ball.c);
+			this._check(x+1, y, ball.c) ||
+			this._check(x, y+1, ball.c);
 	}
 	return false;
+};
+
+Game.prototype.check = function() {
+	var ball = this.ball(0, 0),
+		result = false;
+	if (ball && !ball.h) {
+		result =
+			this._check(1, 0, ball.c) ||
+			this._check(0, 1, ball.c);
+	}
+	if (!result) {
+		var time = Math.round((new Date().getTime() - this.start) / 1000);
+		this.time = time < this.time ? this.time - time : 0;
+		if (ball.h) this.bonus = 100;
+	}
+	return result;
+};
+
+Game.prototype.total = function() {
+	return this.score + this.time + this.bonus;
 };

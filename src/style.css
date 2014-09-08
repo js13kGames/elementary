@@ -1,49 +1,116 @@
 html, body {
-    height: 100%;
     margin: 0;
     padding: 0;
 }
+
 body {
     background: #ddd;
+    font-size: 16px;
     font-family: Courier New, Courier, monospace;
+    perspective: 500px;
 }
+
 h2 {
-    font-size: 24px;
+    font-size: 28px;
 	margin: 6px 12px;
 }
+
 #score {
 	float:right;
 }
+
 #sprite {
     display:none;
 }
+
 #container {
     text-shadow: 0 1px #fff;
     width: 320px;
     margin: 0 auto;
     transform-origin: 50% 0;
 }
+
 #board {
     width: 320px;
 	height: 320px;
+    background-size: 32px;
 }
-.em {
+
+#board .em {
     display: block;
     position: absolute;
     width: 32px;
     height: 32px;
     opacity: 1;
     z-index: 1;
-    transition: opacity .4s, transform .4s cubic-bezier(0.795, 1.650, 0.620, 0.840);
+    transition: opacity .3s, transform .3s cubic-bezier(0.795, 1.650, 0.620, 0.840);
 }
-.hide {
+
+#board .hide {
     opacity: 0;
     z-index: 0;
 }
 
+#timer {
+	margin: 8px 0;
+    background: #00c;
+}
+
+#timer div {
+    background: #c00;
+    height: 8px;
+    transform: scale(0, 1);
+    transform-origin: 0 0;
+}
+
+#timer.run div {
+    transform: scale(1, 1);
+    transition: transform 60s linear;
+}
+
+#scores {
+	position: absolute;
+	background: rgba(0,0,0,.9);
+	color: #fff;
+	width: 300px;
+	left: -150px;
+	padding: 10px 0;
+	margin: 40px 0 0 50%;
+	text-align: center;
+	transition: transform .5s, opacity .5s;
+	transform: rotateX(90deg);
+    opacity: 0;
+    z-index: 0;
+}
+
+#scores.show {
+	transform: rotateX(0deg);
+    opacity: 1;
+    z-index: 2;
+}
+
+#scores table {
+	width: 100%;
+	margin: 16px 0;
+}
+
+#scores th {
+    width: 50%;
+    text-align: right;
+}
+
+#scores td {
+    width: 50%;
+    text-align: left;
+}
+
 @media (min-width: 480px) and (min-height: 540px) {
+	body {
+	    background: #ddd;
+	    font-size: 24px;
+	}    
 	h2 {
-	    font-size: 32px;
+	    font-size: 42px;
 	    margin: 8px 16px;
 	}
 	#container {
@@ -52,16 +119,36 @@ h2 {
 	#board {
 	    width: 480px;
 	    height: 480px;
+        background-size: 48px;
 	}
-    .em {
+    #board .em {
         width: 48px;
         height: 48px;
     }
+	#timer {
+	    margin: 12px 16px;
+	}
+	#timer div {
+	    height: 12px;
+	}
+	#scores {
+	    width: 450px;
+	    left: -225px;
+	    padding: 15px 0;
+	    margin: 60px 0 0 50%;
+	}
+	#scores table {
+        margin: 24px 0;
+	}
 }
 
 @media (min-width: 640px) and (min-height: 720px) {
+    body {
+        background: #ddd;
+        font-size: 32px;
+    }    
 	h2 {
-	    font-size: 48px;
+	    font-size: 54px;
 	    margin: 12px 24px;
 	}
 	#container {
@@ -70,9 +157,25 @@ h2 {
     #board {
         width: 640px;
         height: 640px;
+        background-size: 64px;
     }
-    .em {
+    #board .em {
         width: 64px;
         height: 64px;
+    }
+    #timer {
+        margin: 16px 0;
+    }
+    #timer div {
+        height: 16px;
+    }
+    #scores {
+        width: 600px;
+        left: -300px;
+        padding: 20px 0;
+        margin: 80px 0 0 50%;
+    }
+    #scores table {
+        margin: 32px 0;
     }
 }
