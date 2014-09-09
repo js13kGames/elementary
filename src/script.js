@@ -21,7 +21,8 @@ var APP = (function() {
 				if (!ball.h) {
 					em.src = colors[ball.c];
 					em.className = 'em';
-					em.style.transform = 'translate(' + (x * em.width) + 'px,' + ((game.height - y - 1) * em.height) + 'px)';
+					em.style.transform =
+					em.style.webkitTransform = 'translate(' + (x * em.width) + 'px,' + ((game.height - y - 1) * em.height) + 'px)';
 					em.setAttribute('data-game', JSON.stringify({x:x, y:y}));
 				} else {
 					em.className = 'em hide';
@@ -81,19 +82,26 @@ var APP = (function() {
 	colors.push(color(0,192,0,.9));
 	colors.push(color(0,255,255,.9));
 	board.style.backgroundImage = 'url(' + back() + ')';
+	if (sound.readyState) {
+		sound.currentTime = .1;
+	}
 	
 	for (var i=0; i<game.width * game.height; i++) {
 		var em = new Image();
 		board.appendChild(em);
 		em.className = 'em hide';
-		em.style.transform = 'translate(0px,0px)';
+		em.style.transform = 
+		em.style.webkitTransform = 'translate(0px,0px)';
 		em.ondragstart = function() { return false; };
 	}
 	
 	board.addEventListener('click', function(e) {
 		var data = JSON.parse(e.target.getAttribute('data-game'));
 		if (data && game.select(data.x, data.y)) {
-			sound.play();
+			if (sound.readyState) {
+				sound.currentTime = 0;
+				sound.play();
+			}
 			render();
 		}
 	}, false);
