@@ -39,7 +39,7 @@ h2 {
 }
 
 #board .em {
-    display: block;
+	display: block;
     position: absolute;
     width: 32px;
     height: 32px;
@@ -75,28 +75,33 @@ h2 {
     -webkit-transition: -webkit-transform 60s linear;
 }
 
+#menu,
 #scores {
+    cursor: default;
 	position: absolute;
 	background: rgba(0,0,0,.9);
 	color: #fff;
 	width: 300px;
-	left: -150px;
-	padding: 10px 0;
-	margin: 40px 0 0 50%;
+	height: 300px;
+	left: -160px;
+	padding: 10px;
+	margin: 38px 0 0 50%;
 	text-align: center;
+	transform-origin: 50% 0;
+    -webkit-transform-origin: 50% 0;
 	transition: transform .5s, opacity .5s;
 	-webkit-transition: -webkit-transform .5s, opacity .5s;
-	transform: rotateX(90deg);
-	-webkit-transform: rotateX(90deg);
+	transform: rotateX(-114deg);
+	-webkit-transform: rotateX(-114deg);
     opacity: 0;
-    z-index: 0;
+    z-index: 2;
 }
 
+#menu.show,
 #scores.show {
 	transform: rotateX(0deg);
 	-webkit-transform: rotateX(0deg);
     opacity: 1;
-    z-index: 2;
 }
 
 #scores table {
@@ -105,13 +110,25 @@ h2 {
 }
 
 #scores th {
-    width: 50%;
+    width: 60%;
+    font-weight: normal;
     text-align: right;
 }
 
 #scores td {
-    width: 50%;
+    width: 40%;
     text-align: left;
+}
+
+#menu ul {
+	margin: 48px 0;
+	padding: 0;
+	list-style: none;
+}
+
+#menu li {
+	font-size: 24px;
+    line-height: 48px;
 }
 
 @media (min-width: 480px) and (min-height: 540px) {
@@ -136,19 +153,28 @@ h2 {
         height: 48px;
     }
 	#timer {
-	    margin: 12px 16px;
+	    margin: 12px 0;
 	}
 	#timer div {
 	    height: 12px;
 	}
+	#menu,
 	#scores {
 	    width: 450px;
-	    left: -225px;
-	    padding: 15px 0;
-	    margin: 60px 0 0 50%;
+        height: 450px;
+	    left: -240px;
+	    padding: 15px;
+	    margin: 56px 0 0 50%;
 	}
 	#scores table {
         margin: 24px 0;
+	}
+	#menu ul {
+	    margin: 72px 0;
+	}
+	#menu li {
+	    font-size: 36px;
+		line-height: 72px;
 	}
 }
 
@@ -179,13 +205,22 @@ h2 {
     #timer div {
         height: 16px;
     }
+    #menu,
     #scores {
         width: 600px;
-        left: -300px;
-        padding: 20px 0;
-        margin: 80px 0 0 50%;
+        height: 600px;
+        left: -320px;
+        padding: 20px;
+        margin: 72px 0 0 50%;
     }
     #scores table {
         margin: 32px 0;
+    }
+    #menu ul {
+        margin: 96px 0;
+    }
+    #menu li {
+        font-size: 48px;
+	    line-height: 96px;
     }
 }

@@ -1,6 +1,7 @@
 var APP = (function() {
 
 	var container = document.getElementById('container'),
+		menu = document.getElementById('menu'),
 		scores = document.getElementById('scores'),
 		values = scores.getElementsByTagName('td'),
 		canvas = document.getElementById('sprite'),
@@ -9,9 +10,16 @@ var APP = (function() {
 		sound = document.getElementById('sound'),
 		timer = document.getElementById('timer'),
 		pool = document.getElementsByTagName('img'),
-		game = new Game(10, 10, 2),
+		width = 10,
+		height = 10,
+		game = null,
 		ctx = canvas.getContext('2d'),
-		colors = [];
+		colors = [],
+		highscore = JSON.parse(localStorage.getItem('scores')) || {
+			'score2': 0,
+			'score3': 0,
+			'score4': 0,
+		};
 	
 	function render() {
 		for (var x=0; x<game.width; x++) {
@@ -30,16 +38,13 @@ var APP = (function() {
 			}
 		}
 		if (!game.check()) {
-			timer.className = '';
-			values.item(0).innerHTML = game.score;
-			values.item(1).innerHTML = game.time;
-			values.item(2).innerHTML = game.bonus;
-			values.item(3).innerHTML = game.total();
-			scores.className = 'show';
+			setScores();
 			score.innerHTML = game.total();
+			timer.className = '';
+			scores.className = 'show';
 		} else {
-			timer.className = 'run';
 			score.innerHTML = game.score;
+			timer.className = 'run';
 		}
 	}
 	
@@ -77,6 +82,31 @@ var APP = (function() {
 		return canvas.toDataURL();
 	}
 	
+	function play() {
+		if (sound.readyState) {
+			sound.currentTime = 0;
+			sound.play();
+		}		
+	}
+	
+	function setScores() {
+		if (game) {
+			var name = 'score' + game.colors,
+				total = game.total();
+			values.item(0).innerHTML = game.score;
+			values.item(1).innerHTML = game.time;
+			values.item(2).innerHTML = game.bonus;
+			values.item(3).innerHTML = total;
+			if (total > highscore[name]) {
+				highscore[name] = total;
+			}
+			localStorage.setItem('scores', JSON.stringify(highscore));
+		}
+		values.item(4).innerHTML = highscore.score2;
+		values.item(5).innerHTML = highscore.score3;
+		values.item(6).innerHTML = highscore.score4;
+	}
+	
 	colors.push(color(255,0,0,.9));
 	colors.push(color(0,0,255,.9));
 	colors.push(color(0,192,0,.9));
@@ -86,7 +116,7 @@ var APP = (function() {
 		sound.currentTime = .1;
 	}
 	
-	for (var i=0; i<game.width * game.height; i++) {
+	for (var i=0; i<width * height; i++) {
 		var em = new Image();
 		board.appendChild(em);
 		em.className = 'em hide';
@@ -98,21 +128,33 @@ var APP = (function() {
 	board.addEventListener('click', function(e) {
 		var data = JSON.parse(e.target.getAttribute('data-game'));
 		if (data && game.select(data.x, data.y)) {
-			if (sound.readyState) {
-				sound.currentTime = 0;
-				sound.play();
-			}
 			render();
+			play();
 		}
 	}, false);
 	
 	scores.addEventListener('click', function(e) {
-		scores.className = '';
-		game = new Game(10, 10, 3);
-		render();
+		if (this.className == 'show') {
+			this.className = '';
+			menu.className = 'show';
+			play();
+		}
 	}, false);
 
-	window.onload = render;
-	window.onresize = render;
-
+	menu.addEventListener('click', function(e) {
+		var num = e.target.getAttribute('data-num');
+		if (this.className == 'show' && num) {
+			this.className = '';
+			if (num == '1') {
+				scores.className = 'show';
+			} else {
+				game = new Game(width, height, parseInt(num));
+				render();
+			}
+			play();
+		}
+	}, false);
+	
+	setScores();
+	
 })();

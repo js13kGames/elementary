@@ -5,10 +5,19 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-    <title>Elements</title>
+    <title>Elementary</title>
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
+
+<div id="menu" class="show">
+    <ul>
+        <li data-num="2">Two elements</li>
+        <li data-num="3">Three elements</li>
+        <li data-num="4">Four elements</li>
+        <li data-num="1">Highscores</li>
+    </ul>
+</div>
 
 <div id="scores">
     <h2>Score</h2>
@@ -16,7 +25,7 @@
         <tr><th>Elements:</th><td></td></tr>
         <tr><th>Time Bonus:</th><td></td></tr>
         <tr><th>Clear Bonus:</th><td></td></tr>
-        <tr><th>Total:</th><td></td></tr>
+        <tr><th>Total Score:</th><td></td></tr>
     </table>
     <h2>Highscores</h2>
     <table>
@@ -27,7 +36,7 @@
 </div>
 
 <div id="container">
-    <h2>Elements<span id="score">0</span></h2>
+    <h2>Elementary<span id="score">0</span></h2>
     <div id="board"></div>
     <div id="timer"><div></div></div>
 </div>
