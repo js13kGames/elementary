@@ -9,28 +9,30 @@ var APP = (function() {
 		score = document.getElementById('score'),
 		sound = document.getElementById('sound'),
 		timer = document.getElementById('timer'),
+		mute = document.getElementById('mute'),
 		pool = document.getElementsByTagName('img'),
 		width = 10,
 		height = 10,
 		game = null,
 		ctx = canvas.getContext('2d'),
 		colors = [],
-		highscore = JSON.parse(localStorage.getItem('scores')) || {
+		options = JSON.parse(localStorage.getItem('options')) || {
 			'score2': 0,
 			'score3': 0,
 			'score4': 0,
+			'sound': true
 		};
 	
 	function render() {
-		for (var x=0; x<game.width; x++) {
-			for (var y=0; y<game.height; y++) {
+		for (var y=0; y<height; y++) {
+			for (var x=0; x<width; x++) {
 				var ball = game.ball(x, y),
 					em = pool.item(ball.i);
 				if (!ball.h) {
 					em.src = colors[ball.c];
 					em.className = 'em';
 					em.style.transform =
-					em.style.webkitTransform = 'translate(' + (x * em.width) + 'px,' + ((game.height - y - 1) * em.height) + 'px)';
+					em.style.webkitTransform = 'translate(' + (x * em.width) + 'px,' + ((height - y - 1) * em.height) + 'px)';
 					em.setAttribute('data-game', JSON.stringify({x:x, y:y}));
 				} else {
 					em.className = 'em hide';
@@ -38,7 +40,7 @@ var APP = (function() {
 			}
 		}
 		if (!game.check()) {
-			setScores();
+			setView();
 			score.innerHTML = game.total();
 			timer.className = '';
 			scores.className = 'show';
@@ -81,15 +83,13 @@ var APP = (function() {
 		ctx.restore();
 		return canvas.toDataURL();
 	}
-	
-	function play() {
-		if (sound.readyState) {
-			sound.currentTime = 0;
-			sound.play();
-		}		
+		
+	function saveOptions() {
+		localStorage.setItem('options', JSON.stringify(options));
 	}
 	
-	function setScores() {
+	function setView() {
+		mute.innerHTML = options.sound ? 'On' : 'Off';
 		if (game) {
 			var name = 'score' + game.colors,
 				total = game.total();
@@ -97,14 +97,14 @@ var APP = (function() {
 			values.item(1).innerHTML = game.time;
 			values.item(2).innerHTML = game.bonus;
 			values.item(3).innerHTML = total;
-			if (total > highscore[name]) {
-				highscore[name] = total;
+			if (total > options[name]) {
+				options[name] = total;
+				saveOptions();
 			}
-			localStorage.setItem('scores', JSON.stringify(highscore));
 		}
-		values.item(4).innerHTML = highscore.score2;
-		values.item(5).innerHTML = highscore.score3;
-		values.item(6).innerHTML = highscore.score4;
+		values.item(4).innerHTML = options.score2;
+		values.item(5).innerHTML = options.score3;
+		values.item(6).innerHTML = options.score4;
 	}
 	
 	colors.push(color(255,0,0,.9));
@@ -116,20 +116,25 @@ var APP = (function() {
 		sound.currentTime = .1;
 	}
 	
-	for (var i=0; i<width * height; i++) {
-		var em = new Image();
-		board.appendChild(em);
-		em.className = 'em hide';
-		em.style.transform = 
-		em.style.webkitTransform = 'translate(0px,0px)';
-		em.ondragstart = function() { return false; };
+	for (var y=0; y<height; y++) {
+		for (var x=0; x<width; x++) {
+			var em = new Image();
+			board.appendChild(em);
+			em.className = 'em hide';
+			em.style.transform =
+			em.style.webkitTransform = 'translate(' + (x * em.width) + 'px,' + ((height - y - 1) * em.height) + 'px)';
+			em.ondragstart = function() { return false; };
+		}
 	}
 	
 	board.addEventListener('click', function(e) {
 		var data = JSON.parse(e.target.getAttribute('data-game'));
 		if (data && game.select(data.x, data.y)) {
 			render();
-			play();
+			if (options.sound && sound.readyState) {
+				sound.currentTime = 0;
+				sound.play();
+			}
 		}
 	}, false);
 	
@@ -137,24 +142,30 @@ var APP = (function() {
 		if (this.className == 'show') {
 			this.className = '';
 			menu.className = 'show';
-			play();
 		}
 	}, false);
 
 	menu.addEventListener('click', function(e) {
-		var num = e.target.getAttribute('data-num');
-		if (this.className == 'show' && num) {
-			this.className = '';
-			if (num == '1') {
-				scores.className = 'show';
-			} else {
-				game = new Game(width, height, parseInt(num));
-				render();
+		var item = e.target.getAttribute('data-item');
+		if (this.className == 'show' && item) {
+			switch (item) {
+				case 'scores':
+					this.className = '';
+					scores.className = 'show';
+					break;
+				case 'sound':
+					options.sound = !options.sound;
+					saveOptions();
+					setView();
+					break;
+				default:
+					this.className = '';
+					game = new Game(width, height, parseInt(item));
+					render();
 			}
-			play();
 		}
 	}, false);
 	
-	setScores();
+	setView();
 	
 })();
