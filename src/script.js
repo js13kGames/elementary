@@ -166,6 +166,8 @@ var APP = (function() {
 		}
 	}, false);
 	
+	window.onresize = render;
+	
 	setView();
 	
 })();
